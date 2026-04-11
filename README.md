@@ -1,48 +1,100 @@
 # LRA-26 Live Leaderboard 🏆
 
 [![Stars](https://img.shields.io/github/stars/Saborrr/lra26)](https://github.com/Saborrr/lra26)
-[![Django](https://img.shields.io/badge/Django-4.2-blue.svg)](https://www.djangoproject.com/)
+[![Django](https://img.shields.io/badge/Django-5.1-blue.svg)](https://www.djangoproject.com/)
 [![React](https://img.shields.io/badge/React-18-green.svg)](https://react.dev/)
 [![Docker](https://img.shields.io/badge/Docker-blue.svg)](https://docker.com/)
 [![MIT License](https://img.shields.io/github/license/Saborrr/lra26)](LICENSE)
 
-**Live рейтинг команд Слёта Лидеров Рабочего Актива 2026 (EFKO).** 7 команд, квесты, real-time results.
+**Live рейтинг команд Слёта Лидеров Рабочего Актива 2026 (EFKO).** Real-time leaderboard, quests, scores.
 
 ## 🚀 Features
-- 📊 Live leaderboard (score/position auto).
-- 🔐 Admin CRUD: teams/trainers/quests/results.
-- ⚡ Real-time WebSocket.
-- 📱 Mobile glass UI.
-- 🛡️ JWT auth.
+- 📊 Live leaderboard with WebSocket updates
+- 🔐 JWT auth + custom permissions
+- 📱 Glassmorphism mobile UI with Recharts
+- 🧪 Full tests (pytest, API)
+- 🛠️ Dev/prod settings split
+- 📦 Docker Compose for local/prod
 
-## 🛠️ Stack
-| Part | Tech |
-|------|------|
-| Backend | Django REST + Channels |
-| Frontend | React + Vite + Recharts |
-| DB | SQLite |
-| Deploy | Docker Compose + Nginx |
+## 📁 Structure
+```
+lra26/
+├── backend/  # Django 5.1 + DRF + Channels
+│   ├── manage.py
+│   ├── backend/ # project
+│   │   ├── settings/ # base/dev/prod
+│   │   ├── urls.py
+│   │   ├── asgi.py # WS
+│   │   └── wsgi.py
+│   ├── apps/
+│   │   ├── teams/ # models/views/serializers/...
+│   │   ├── scores/
+│   │   └── quests/
+│   ├── api/ # urls/permissions
+│   ├── ws/ # consumers/routing
+│   ├── requirements/ # base/dev/prod.txt
+│   ├── pyproject.toml
+│   └── pytest.ini
+├── frontend/ # React + Vite + TS
+│   ├── package.json
+│   ├── vite.config.ts # proxy API/WS
+│   ├── tsconfig.json
+│   └── src/
+│       ├── main.tsx
+│       ├── App.tsx
+│       ├── index.css # glass UI
+│       └── services/api.ts
+├── .github/workflows/ # tests/deploy
+├── docker-compose.yml
+├── README.md
+└── LICENSE
+```
 
-## 📦 Install
+## 🛠️ Local Setup
+
+### Backend
 ```bash
-git clone https://github.com/Saborrr/lra26.git
-cd lra26
+cd backend
+pip install -r requirements/development.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev  # http://localhost:3000
+```
+
+### Docker
+```bash
 docker compose up -d
 ```
 
-## 📁 Structure
-backend/ frontend/ docker-compose.yml
+Backend: http://localhost:8000/admin/
+Frontend: http://localhost:3000
 
-## 🔌 API
-GET /api/teams/ — leaderboard.
-
-## 🐳 Deploy VPS
-docker compose up -d
+## 🔌 API Docs
+- `GET /api/teams/` - leaderboard
+- `POST /api/teams/` - create team (admin)
+- `GET /api/scores/` - scores
+- `ws://localhost:8000/ws/leaderboard/` - live updates
 
 ## 🧪 Tests
-pytest / npm test
+```bash
+# Backend
+cd backend
+pytest
 
-## 🤝 Contributing
-Fork/PR/tests.
+# Frontend
+cd frontend
+npm run lint
+```
 
-MIT © Saborrr.
+## 🚀 Deploy
+GitHub Actions auto-tests on PR/main.
+Deploy: VPS with Docker Compose + Nginx.
+
+MIT © Saborrr

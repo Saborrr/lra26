@@ -205,3 +205,20 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Backend
+backend/venv/
+backend/db.sqlite3-journal
+backend/media/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env*
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# Logs
+*.log
