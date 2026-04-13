@@ -4,3 +4,5 @@ channels==4.1.0
 djangorestframework-simplejwt==5.3.1
 python-decouple==3.8
 django-cors-headers==4.4.0
+django-filter==24.3
+pillow==10.4.0

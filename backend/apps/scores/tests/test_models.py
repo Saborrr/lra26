@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from teams.models import Team
+from apps.teams.models import Team
 from ..models import Score
 
 

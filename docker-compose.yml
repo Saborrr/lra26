@@ -10,13 +10,17 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 backend.asgi:application
     volumes:
       - ./backend:/app
+      - sqlite_data:/app/data
     ports:
       - "8000:8000"
     env_file:
       - backend/.env
+    environment:
+      - DJANGO_SETTINGS_MODULE=backend.settings.base
+      - DATABASE_URL=sqlite:///data/db.sqlite3
     depends_on:
       - redis
 
@@ -24,11 +28,22 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    command: npm run dev
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     ports:
-      - "3000:3000"
+      - "80:80"
     depends_on:
       - backend
+
+  bot:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python manage.py runbot
+    volumes:
+      - ./backend:/app
+    env_file:
+      - backend/.env
+    depends_on:
+      - backend
+
+volumes:
+  sqlite_data:
