@@ -1,5 +1,4 @@
-import { LucideIcon } from 'lucide-react';
-import { Crown, Users, Award } from 'lucide-react';
+import { Crown, Users } from 'lucide-react';
 import { clsx } from 'clsx';
 
 interface Team {

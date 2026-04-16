@@ -5,13 +5,13 @@ import { useLeaderboard } from '../services/api';
 import { useLeaderboardWS } from '../hooks/useWebSocket';
 
 export function LeaderboardPage() {
-  const { data: teams = [], isLoading } = useLeaderboard();
+  const { data: teams = [], isLoading, isError, error } = useLeaderboard();
   useLeaderboardWS();
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="neon-text text-2xl">Загрузка рейтинга...</div>
+        <div className="neon-text text-2xl animate-pulse">Загрузка рейтинга...</div>
       </div>
     );
   }
@@ -26,9 +26,28 @@ export function LeaderboardPage() {
           </h1>
           <p className="opacity-75 text-lg">Live рейтинг команд Слёта Лидеров Рабочего Актива</p>
         </GlassCard>
-        <GlassCard padding="p-2 md:p-8">
-          <LeaderboardTable teams={teams} />
-        </GlassCard>
+
+        {isError && (
+          <GlassCard className="text-center mb-8 border-red-500/50">
+            <p className="text-red-400 text-lg">
+              ⚠️ Ошибка загрузки данных: {error instanceof Error ? error.message : 'Неизвестная ошибка'}
+            </p>
+            <p className="opacity-60 mt-2">Попробуйте обновить страницу</p>
+          </GlassCard>
+        )}
+
+        {!isError && teams.length === 0 && (
+          <GlassCard className="text-center">
+            <p className="neon-text text-xl">Команды пока не добавлены</p>
+            <p className="opacity-60 mt-2">Данные появятся, когда будут созданы команды</p>
+          </GlassCard>
+        )}
+
+        {teams.length > 0 && (
+          <GlassCard padding="p-2 md:p-8">
+            <LeaderboardTable teams={teams} />
+          </GlassCard>
+        )}
       </div>
     </div>
   );

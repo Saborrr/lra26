@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-const API_BASE = '/api';
+// В dev-режиме ходим напрямую в Django (фиксит IPv6 proxy баг Node 18.13)
+const API_BASE = import.meta.env.DEV 
+  ? 'http://127.0.0.1:8000/api' 
+  : '/api';
 
 interface Team {
   id: number;

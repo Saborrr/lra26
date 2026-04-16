@@ -266,7 +266,7 @@ tr:last-child td {
     </table>
     
     <div class="admin-link">
-      <a href="/admin.html">Admin Portal →</a>
+      <a href="/trainer/">🛸 Тренерская</a> · <a href="/admin/">⚙️ Админка</a>
     </div>
   </div>
   
@@ -352,16 +352,32 @@ function updateFact() {
 updateFact();
 setInterval(updateFact, 10000); // Меняем факт каждые 10 секунд
 
-// Mock leaderboard with more teams
-const teams = [
-  { pos: 1, name: 'Красные', trainer: 'Илон', score: 950, quests: 14 },
-  { pos: 2, name: 'Оранжевые', trainer: 'Маск', score: 920, quests: 13 },
-  { pos: 3, name: 'Желтые', trainer: 'Сергей', score: 875, quests: 12 },
-  { pos: 4, name: 'Зеленые', trainer: 'Мария', score: 860, quests: 11 },
-  { pos: 5, name: 'Голубые', trainer: 'Дмитрий', score: 845, quests: 11 },
-  { pos: 6, name: 'Синие', trainer: 'Елена', score: 830, quests: 10 },
-  { pos: 7, name: 'Фиолетовые', trainer: 'Виктор', score: 815, quests: 10 }
-];
+// Загрузка данных из API
+let teams = [];
+
+async function fetchLeaderboard() {
+  try {
+    const res = await fetch('/api/leaderboard/');
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    teams = data.map((t, i) => ({
+      pos: i + 1,
+      name: t.name,
+      trainer: t.trainer_name || '—',
+      score: t.score,
+      penalty: t.penalty,
+      total: t.total_score
+    }));
+    updateTable();
+  } catch (err) {
+    console.error('Ошибка загрузки:', err);
+    // Если API недоступен — показываем заглушку
+    const tbody = document.getElementById('table-body');
+    if (!tbody.children.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;opacity:0.6;padding:20px">Загрузка данных...</td></tr>';
+    }
+  }
+}
 
 function updateTable() {
   const tbody = document.getElementById('table-body');
@@ -370,19 +386,26 @@ function updateTable() {
         <td class="position">#${t.pos}</td>
         <td class="team">${t.name}</td>
         <td class="trainer">${t.trainer}</td>
-        <td class="score">${t.score}</td>
-        <td class="quests">${t.quests}</td>
+        <td class="score">${t.total}</td>
+        <td class="quests">${t.penalty}</td>
       </tr>`
   ).join('');
 }
-updateTable();
 
-setInterval(() => {
-  teams[Math.floor(Math.random() * teams.length)].score += Math.floor(Math.random()*10 + 1);
-  teams.sort((a, b) => b.score - a.score);
-  teams.forEach((t, i) => t.pos = i + 1);
-  updateTable();
-}, 3000);
+// Первая загрузка
+fetchLeaderboard();
+
+// Обновление каждые 5 секунд
+setInterval(fetchLeaderboard, 5000);
+
+// WebSocket для мгновенных обновлений (если доступен)
+try {
+  const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const wsUrl = `${wsProtocol}//${location.host}/ws/leaderboard/`;
+  const ws = new WebSocket(wsUrl);
+  ws.onmessage = () => fetchLeaderboard();
+  ws.onerror = () => console.log('WS недоступен, используем polling');
+} catch(e) {}
 </script>
 </body>
 </html>
