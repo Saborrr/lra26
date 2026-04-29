@@ -64,3 +64,33 @@ body {
   transform: translateX(10px);
   box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
 }
+
+/* VK Mini App / Mobile responsive */
+html, body { height: 100%; }
+#root { min-height: 100%; }
+
+@media (max-width: 768px) {
+  .admin-burger { display: block !important; }
+  .admin-sidebar {
+    position: fixed !important;
+    left: -220px !important;
+    top: 60px !important;
+    bottom: 0 !important;
+    z-index: 100 !important;
+    transition: left 0.3s ease !important;
+  }
+  .admin-sidebar.open { left: 0 !important; }
+  main { padding: 15px !important; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,255,255,0.3); border-radius: 3px; }
+
+/* VK Bridge mini app full height */
+.vk-app {
+  height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}

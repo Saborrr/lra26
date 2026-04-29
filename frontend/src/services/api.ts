@@ -1,28 +1,22 @@
-import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-// В dev-режиме ходим напрямую в Django (фиксит IPv6 proxy баг Node 18.13)
-const API_BASE = import.meta.env.DEV 
-  ? 'http://127.0.0.1:8000/api' 
-  : '/api';
+const BASE_URL = import.meta.env.VITE_API_URL || '';
 
-interface Team {
-  id: number;
-  name: string;
-  trainer_name: string | null;
-  score: number;
-  penalty: number;
-  total_score: number;
-  color: string;
-  position: number | null;
+export const api = {
+  get: (url: string) => axios.get(`${BASE_URL}${url}`),
+  post: (url: string, data: any) => axios.post(`${BASE_URL}${url}`, data),
+  put: (url: string, data: any) => axios.put(`${BASE_URL}${url}`, data),
+  delete: (url: string) => axios.delete(`${BASE_URL}${url}`),
+};
+
+export function getToken(): string | null {
+  return localStorage.getItem('jwt_token');
 }
 
-export function useLeaderboard() {
-  return useQuery<Team[]>({
-    queryKey: ['leaderboard'],
-    queryFn: async () => {
-      const res = await fetch(`${API_BASE}/leaderboard/`);
-      if (!res.ok) throw new Error('Failed to fetch leaderboard');
-      return res.json();
-    },
-  });
+export function setToken(token: string) {
+  localStorage.setItem('jwt_token', token);
+}
+
+export function clearToken() {
+  localStorage.removeItem('jwt_token');
 }

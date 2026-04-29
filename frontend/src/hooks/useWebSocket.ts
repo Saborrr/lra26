@@ -1,50 +1,36 @@
-import { useEffect, useRef } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 
-/**
- * Хук для WebSocket-соединения с leaderboard.
- * URL определяется автоматически на основе текущего location.
- */
-export function useLeaderboardWS() {
-  const queryClient = useQueryClient();
-  const wsRef = useRef<WebSocket | null>(null);
+const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000';
+
+export function useWebSocket(path = '/ws/leaderboard/') {
+  const [data, setData] = useState<any>(null);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    // В dev-режиме подключаемся напрямую к Django (фиксит IPv6 proxy баг)
-    const wsUrl = import.meta.env.DEV
-      ? 'ws://127.0.0.1:8000/ws/leaderboard/'
-      : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/leaderboard/`;
+    let ws: WebSocket | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout>;
 
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
-
-    ws.onopen = () => console.log('WS connected');
-    ws.onclose = () => console.log('WS disconnected');
-    ws.onerror = (err) => console.error('WS error:', err);
-
-    ws.onmessage = (event) => {
+    function connect() {
       try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'score_update' || data.type === 'connected') {
-          queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
-          console.log('Leaderboard updated via WS');
-        }
-      } catch {
-        console.error('WS: failed to parse message');
-      }
-    };
+        ws = new WebSocket(`${WS_URL}${path}`);
+        
+        ws.onopen = () => setConnected(true);
+        ws.onclose = () => {
+          setConnected(false);
+          reconnectTimer = setTimeout(connect, 3000);
+        };
+        ws.onmessage = (e) => {
+          try { setData(JSON.parse(e.data)); } catch {}
+        };
+      } catch {}
+    }
 
-    // Пинг для поддержания соединения
-    const pingInterval = setInterval(() => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: 'ping' }));
-      }
-    }, 30000);
-
+    connect();
     return () => {
-      clearInterval(pingInterval);
-      ws.close();
-      wsRef.current = null;
+      if (ws) ws.close();
+      clearTimeout(reconnectTimer);
     };
-  }, [queryClient]);
+  }, [path]);
+
+  return { data, connected };
 }
