@@ -12,5 +12,5 @@ python-decouple~=3.8
 python-telegram-bot~=22.4
 argon2-cffi~=25.1
 pillow~=12.3
-whitenoise~=6.9
+whitenoise~=6.12
 sentry-sdk[django]~=2.35
