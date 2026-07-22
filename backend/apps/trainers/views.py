@@ -1,34 +1,38 @@
-"""Views для тренеров."""
-
-from django_filters.rest_framework import DjangoFilterBackend
+from django.db import transaction
 from rest_framework import viewsets
-from rest_framework.permissions import IsAdminUser
+
+from api.permissions import IsAdmin
+from apps.accounts.services import audit
 
 from .models import Trainer
-from .serializers import (
-    TrainerCreateSerializer,
-    TrainerListSerializer,
-    TrainerSerializer,
-)
+from .serializers import TrainerCreateSerializer, TrainerListSerializer, TrainerSerializer
 
 
 class TrainerViewSet(viewsets.ModelViewSet):
-    """ViewSet для тренеров.
-
-    Чтение доступно всем, создание/редактирование - только админам.
-    """
-
-    queryset = Trainer.objects.all()
-    serializer_class = TrainerSerializer
-    permission_classes = [IsAdminUser]
-    filter_backends = [DjangoFilterBackend]
+    queryset = Trainer.objects.select_related("user").all()
+    permission_classes = [IsAdmin]
     filterset_fields = ["name", "telegram_id"]
-    ordering = ["name"]
 
     def get_serializer_class(self):
-        """Возвращает разные сериализаторы для разных действий."""
         if self.action == "list":
             return TrainerListSerializer
         if self.action == "create":
             return TrainerCreateSerializer
-        return super().get_serializer_class()
+        return TrainerSerializer
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        obj = serializer.save()
+        audit(action="trainer.create", actor=self.request.user, target=obj, request=self.request)
+
+    @transaction.atomic
+    def perform_update(self, serializer):
+        obj = serializer.save()
+        audit(action="trainer.update", actor=self.request.user, target=obj, request=self.request)
+
+    @transaction.atomic
+    def perform_destroy(self, instance):
+        audit(
+            action="trainer.delete", actor=self.request.user, target=instance, request=self.request
+        )
+        instance.delete()

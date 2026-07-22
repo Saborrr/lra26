@@ -5,52 +5,73 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('quests', '0001_initial'),
-        ('scores', '0001_initial'),
-        ('teams', '0002_team_color_team_logo_team_penalty_alter_team_name_and_more'),
-        ('trainers', '0001_initial'),
+        ("quests", "0001_initial"),
+        ("scores", "0001_initial"),
+        ("teams", "0002_team_color_team_logo_team_penalty_alter_team_name_and_more"),
+        ("trainers", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='score',
-            options={'ordering': ['-timestamp'], 'verbose_name': 'Результат', 'verbose_name_plural': 'Результаты'},
+            name="score",
+            options={
+                "ordering": ["-timestamp"],
+                "verbose_name": "Результат",
+                "verbose_name_plural": "Результаты",
+            },
         ),
         migrations.AddField(
-            model_name='score',
-            name='entered_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='entered_scores', to='trainers.trainer', verbose_name='Внёс'),
+            model_name="score",
+            name="entered_by",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="entered_scores",
+                to="trainers.trainer",
+                verbose_name="Внёс",
+            ),
         ),
         migrations.AddField(
-            model_name='score',
-            name='notes',
-            field=models.TextField(blank=True, verbose_name='Примечания'),
+            model_name="score",
+            name="notes",
+            field=models.TextField(blank=True, verbose_name="Примечания"),
         ),
         migrations.AddField(
-            model_name='score',
-            name='quest',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='scores', to='quests.quest', verbose_name='Квест'),
+            model_name="score",
+            name="quest",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="scores",
+                to="quests.quest",
+                verbose_name="Квест",
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='score',
-            name='verified',
-            field=models.BooleanField(default=False, verbose_name='Подтверждён'),
+            model_name="score",
+            name="verified",
+            field=models.BooleanField(default=False, verbose_name="Подтверждён"),
         ),
         migrations.AlterField(
-            model_name='score',
-            name='points',
-            field=models.IntegerField(default=0, verbose_name='Баллы'),
+            model_name="score",
+            name="points",
+            field=models.IntegerField(default=0, verbose_name="Баллы"),
         ),
         migrations.AlterField(
-            model_name='score',
-            name='team',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='scores', to='teams.team', verbose_name='Команда'),
+            model_name="score",
+            name="team",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="scores",
+                to="teams.team",
+                verbose_name="Команда",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='score',
-            unique_together={('team', 'quest')},
+            name="score",
+            unique_together={("team", "quest")},
         ),
     ]

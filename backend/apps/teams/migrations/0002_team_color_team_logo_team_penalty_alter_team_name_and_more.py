@@ -5,46 +5,54 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('teams', '0001_initial'),
-        ('trainers', '0001_initial'),
+        ("teams", "0001_initial"),
+        ("trainers", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='team',
-            name='color',
-            field=models.CharField(blank=True, max_length=20, verbose_name='Цвет'),
+            model_name="team",
+            name="color",
+            field=models.CharField(blank=True, max_length=20, verbose_name="Цвет"),
         ),
         migrations.AddField(
-            model_name='team',
-            name='logo',
-            field=models.ImageField(blank=True, null=True, upload_to='team_logos/', verbose_name='Логотип'),
+            model_name="team",
+            name="logo",
+            field=models.ImageField(
+                blank=True, null=True, upload_to="team_logos/", verbose_name="Логотип"
+            ),
         ),
         migrations.AddField(
-            model_name='team',
-            name='penalty',
-            field=models.IntegerField(default=0, verbose_name='Штраф'),
+            model_name="team",
+            name="penalty",
+            field=models.IntegerField(default=0, verbose_name="Штраф"),
         ),
         migrations.AlterField(
-            model_name='team',
-            name='name',
-            field=models.CharField(max_length=100, unique=True, verbose_name='Название'),
+            model_name="team",
+            name="name",
+            field=models.CharField(max_length=100, unique=True, verbose_name="Название"),
         ),
         migrations.AlterField(
-            model_name='team',
-            name='position',
-            field=models.PositiveIntegerField(blank=True, null=True, verbose_name='Позиция'),
+            model_name="team",
+            name="position",
+            field=models.PositiveIntegerField(blank=True, null=True, verbose_name="Позиция"),
         ),
         migrations.AlterField(
-            model_name='team',
-            name='score',
-            field=models.IntegerField(default=0, verbose_name='Счёт'),
+            model_name="team",
+            name="score",
+            field=models.IntegerField(default=0, verbose_name="Счёт"),
         ),
         migrations.AlterField(
-            model_name='team',
-            name='trainer',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='teams', to='trainers.trainer', verbose_name='Тренер'),
+            model_name="team",
+            name="trainer",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="teams",
+                to="trainers.trainer",
+                verbose_name="Тренер",
+            ),
         ),
     ]

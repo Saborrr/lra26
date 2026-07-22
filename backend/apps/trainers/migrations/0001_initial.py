@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -15,20 +14,39 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Trainer',
+            name="Trainer",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Имя тренера')),
-                ('telegram_id', models.BigIntegerField(blank=True, null=True, unique=True, verbose_name='Telegram ID')),
-                ('phone', models.CharField(blank=True, max_length=20, verbose_name='Телефон')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Пользователь')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, verbose_name="Имя тренера")),
+                (
+                    "telegram_id",
+                    models.BigIntegerField(
+                        blank=True, null=True, unique=True, verbose_name="Telegram ID"
+                    ),
+                ),
+                ("phone", models.CharField(blank=True, max_length=20, verbose_name="Телефон")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Пользователь",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Тренер',
-                'verbose_name_plural': 'Тренеры',
-                'ordering': ['name'],
+                "verbose_name": "Тренер",
+                "verbose_name_plural": "Тренеры",
+                "ordering": ["name"],
             },
         ),
     ]

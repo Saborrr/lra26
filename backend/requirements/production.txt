@@ -1,4 +1,1 @@
 -r base.txt
-gunicorn==23.0.0
-sentry-sdk==2.14.0
-whitenoise==6.8.0

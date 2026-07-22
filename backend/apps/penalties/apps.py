@@ -2,6 +2,6 @@ from django.apps import AppConfig
 
 
 class PenaltiesConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.penalties'
-    verbose_name = 'Штрафы'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.penalties"
+    verbose_name = "Штрафы"

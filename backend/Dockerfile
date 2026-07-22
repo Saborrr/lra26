@@ -1,27 +1,20 @@
-# Backend Dockerfile для LRA-26
-FROM python:3.12-slim
+FROM python:3.12-slim AS runtime
 
-# Установка системных зависимостей
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
-# Рабочая директория
+RUN groupadd --system app && useradd --system --gid app --home /app app
 WORKDIR /app
 
-# Копируем requirements
-COPY requirements/base.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements/production.txt requirements/base.txt requirements/
+RUN pip install --no-cache-dir -r requirements/production.txt
 
-# Копируем код
-COPY . .
+COPY --chown=app:app . .
+RUN mkdir -p /app/staticfiles /app/media && chown -R app:app /app/staticfiles /app/media
+USER app
+RUN SECRET_KEY=build-only-secret DEBUG=True python manage.py collectstatic --noinput --settings=backend.settings.development
 
-# Собираем статику
-RUN python manage.py collectstatic --noinput
-
-# Открываем порт
 EXPOSE 8000
-
-# Команда запуска
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health/', timeout=3)" || exit 1
 CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "backend.asgi:application"]

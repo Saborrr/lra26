@@ -1,17 +1,13 @@
-"""Management command для запуска Telegram-бота."""
-
 from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    """Запускает Telegram-бота."""
-
-    help = "Запускает Telegram-бота для LRA-26"
+    help = "Run the LRA-26 Telegram bot in long-polling mode"
 
     def handle(self, *args, **options):
-        """Запуск бота."""
         from bot.handlers import create_application
 
-        self.stdout.write("Запуск Telegram-бота...")
-        app = create_application()
-        app.run_polling(allowed_updates=["message", "callback_query"])
+        self.stdout.write(self.style.SUCCESS("Telegram bot started"))
+        create_application().run_polling(
+            allowed_updates=["message", "callback_query"], drop_pending_updates=False
+        )

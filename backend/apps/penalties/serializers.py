@@ -9,9 +9,7 @@ class BlackMarkSerializer(serializers.ModelSerializer):
     """Полный сериализатор штрафа."""
 
     team_name = serializers.CharField(source="team.name", read_only=True)
-    given_by_name = serializers.CharField(
-        source="given_by.name", read_only=True, allow_null=True
-    )
+    given_by_name = serializers.CharField(source="given_by.name", read_only=True, allow_null=True)
 
     class Meta:
         model = BlackMark
@@ -25,7 +23,7 @@ class BlackMarkSerializer(serializers.ModelSerializer):
             "given_by_name",
             "created_at",
         ]
-        read_only_fields = ["created_at"]
+        read_only_fields = ["given_by", "created_at"]
 
 
 class BlackMarkListSerializer(serializers.ModelSerializer):
