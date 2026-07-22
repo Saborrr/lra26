@@ -10,6 +10,10 @@ A secure space-themed competition platform for Web, iOS, Android, Telegram, and 
 
 </div>
 
+![LRA-26 application preview](docs/assets/app-preview.svg)
+
+> Downloaded the repository as a ZIP? Double-click the root `index.html` file to open an interactive, self-contained UI preview with demo data. It requires no Python, Node.js, or database.
+
 ## Highlights
 
 - Live public leaderboard powered by WebSockets with an HTTP fallback.
