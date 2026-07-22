@@ -34,8 +34,14 @@ The project validates Telegram and VK signed launch data on the server, uses Arg
 
 Please report vulnerabilities privately according to [SECURITY.md](SECURITY.md).
 
+## Licensing
+
+The source is available under the [PolyForm Noncommercial License 1.0.0](LICENSE). Personal, educational, and other noncommercial use is permitted while preserving the required author notice and original-project link. Commercial use, SaaS, resale, or revenue-supporting use requires a separate [commercial agreement](COMMERCIAL_LICENSE.md) with Aleksandr Fadeev. That agreement may use a fixed fee, subscription, or revenue-share royalty.
+
+This is a **source-available** project, not OSI-approved open source.
+
 ## Author
 
 **Aleksandr Fadeev** · [@Saborrr](https://github.com/Saborrr)
 
-Released under the [Apache 2.0 License](LICENSE).
+Noncommercial license: [PolyForm Noncommercial 1.0.0](LICENSE) · [Commercial terms](COMMERCIAL_LICENSE.md).

@@ -27,7 +27,10 @@ export function AppShell() {
         </div>
       </header>
       <main><Outlet /></main>
-      <footer><Rocket size={15} /> LRA-26 · Live Space Ranking</footer>
+      <footer>
+        <Rocket size={15} /> LRA-26 · © 2026&nbsp;
+        <a href="https://github.com/Saborrr/lra26" target="_blank" rel="noreferrer">Aleksandr Fadeev</a>
+      </footer>
     </div>
   );
 }
