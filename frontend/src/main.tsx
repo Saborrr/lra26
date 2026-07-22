@@ -1,21 +1,20 @@
-import React from "react"
-import ReactDOM from "react-dom/client"
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import App from "./App.tsx"
-import "./index.css"
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { registerSW } from 'virtual:pwa-register';
+
+import App from './App';
+import './index.css';
+
+registerSW({ immediate: true });
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: {
-      refetchInterval: 5000, // refetch every 5s for live
-    },
+    queries: { staleTime: 15_000, retry: 1, refetchOnWindowFocus: true },
+    mutations: { retry: 0 },
   },
-})
+});
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
-  </React.StrictMode>,
-)
+createRoot(document.getElementById('root')!).render(
+  <StrictMode><QueryClientProvider client={queryClient}><App /></QueryClientProvider></StrictMode>,
+);

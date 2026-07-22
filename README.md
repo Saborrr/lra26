@@ -1,235 +1,144 @@
-# LRA-26 Live Leaderboard 🏆
+<div align="center">
 
-[![Stars](https://img.shields.io/github/stars/Saborrr/lra26)](https://github.com/Saborrr/lra26)
-[![Django](https://img.shields.io/badge/Django-5.1-blue.svg)](https://www.djangoproject.com/)
-[![React](https://img.shields.io/badge/React-18-green.svg)](https://react.dev/)
-[![Docker](https://img.shields.io/badge/Docker-blue.svg)](https://docker.com/)
-[![MIT License](https://img.shields.io/github/license/Saborrr/lra26)](LICENSE)
+<img src="frontend/public/icons/icon.svg" width="112" alt="LRA-26" />
 
-**Live рейтинг команд Слёта Лидеров Рабочего Актива 2026 (EFKO).**  
-Real-time leaderboard, квесты, оценки, Telegram-бот.
+# LRA-26 · Live Space Ranking
 
----
+Космическая платформа соревнований для Web, iOS, Android, Telegram и VK.
 
-## 🚀 Возможности
-- 📊 Live-лидерборд с WebSocket обновлениями (космический дизайн)
-- 👨‍🏫 Интерфейс тренеров — выставление оценок через веб
-- 🤖 Telegram-бот — `/teams`, `/addscore`, `/myteam`
-- 🔐 JWT авторизация + Django Admin
-- ⚫ Чёрные метки (штрафы) для команд
-- 📱 Адаптивный мобильный UI
-- 🛠️ Dev/prod настройки (SQLite/PostgreSQL)
-- 📦 Docker Compose для продакшена
+[![CI](https://github.com/Saborrr/lra26/actions/workflows/ci.yml/badge.svg)](https://github.com/Saborrr/lra26/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Saborrr/lra26/actions/workflows/codeql.yml/badge.svg)](https://github.com/Saborrr/lra26/actions/workflows/codeql.yml)
+[![Django](https://img.shields.io/badge/Django-5.2_LTS-092E20?logo=django)](https://www.djangoproject.com/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=08121a)](https://react.dev/)
+[![PWA](https://img.shields.io/badge/PWA-ready-7967ff?logo=pwa)](https://web.dev/explore/progressive-web-apps)
+[![License](https://img.shields.io/badge/license-Apache--2.0-48e5ff)](LICENSE)
 
----
+**Русский** · [English](README_EN.md)
 
-## 📁 Структура проекта
-```
-lra26/
-├── backend/                # Django 5.1 + DRF + Channels + Daphne
-│   ├── manage.py
-│   ├── backend/            # настройки проекта
-│   │   ├── settings/       # base / development / production
-│   │   ├── urls.py
-│   │   ├── asgi.py         # WebSocket (Daphne)
-│   │   └── wsgi.py
-│   ├── apps/
-│   │   ├── teams/          # Команды
-│   │   ├── scores/         # Оценки за квесты
-│   │   ├── quests/         # Квесты/задания
-│   │   ├── trainers/       # Тренеры
-│   │   └── penalties/      # Чёрные метки (штрафы)
-│   ├── api/                # API endpoints
-│   ├── ws/                 # WebSocket consumer
-│   ├── bot/                # Telegram-бот
-│   ├── templates/          # HTML шаблоны (лидерборд, трейнерская)
-│   └── requirements/       # base / development / production.txt
-├── frontend/               # React + Vite + TypeScript
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── src/
-├── docker-compose.yml
-└── README.md
-```
+</div>
 
----
+## Возможности
 
-## 🛠️ Локальный запуск (разработка)
+- Публичный live-рейтинг с WebSocket и резервным обновлением по HTTP.
+- Устанавливаемое PWA для iPhone, iPad и Android.
+- Telegram Mini App и безопасный Telegram-бот.
+- VK Mini App через официальный VK Bridge.
+- Кабинет участника с командой, баллами и активными заданиями.
+- Панель администратора для команд, квестов, результатов и штрафов.
+- Отдельная роль суперадминистратора для пользователей, прав и журнала действий.
+- Одноразовые 15-минутные коды привязки Telegram/VK.
+- PostgreSQL, Redis, Django Channels, Docker Compose и reverse proxy.
 
-### Предварительные требования
-- Python 3.11+
-- Node.js 18+
-- Git
+## Роли
 
-### 1. Клонирование
-```bash
-git clone git@github.com:Saborrr/lra26.git
-cd lra26
+| Роль | Возможности |
+|---|---|
+| Участник | Публичный рейтинг, свой кабинет, команда и задания |
+| Администратор | Управление командами, квестами, результатами, штрафами и кодами участников |
+| Суперадминистратор | Все права администратора, управление пользователями и ролями, полный audit log |
+
+Публичные пользователи не могут читать внутренние результаты и изменять данные. Все изменения баллов и штрафов записываются в журнал.
+
+## Архитектура
+
+```text
+Browser / PWA / Telegram / VK
+              │
+      /lra26/ · HTTPS
+              │
+         Nginx frontend
+          ├── React PWA
+          ├── /api → Django REST
+          └── /ws  → Django Channels
+                       ├── PostgreSQL
+                       └── Redis
+
+Telegram bot → Django services → PostgreSQL
 ```
 
-### 2. Backend
+На production наружу публикуется только `127.0.0.1:8088`. PostgreSQL, Redis и Django находятся во внутренней Docker-сети и не занимают публичные порты.
+
+## Быстрый локальный запуск
+
+Требуются Python 3.12+, Node.js 22+ и Redis при проверке WebSocket.
+
 ```bash
 cd backend
-
-# Создать виртуальное окружение
-python -m venv venv
-
-# Активация (Windows)
-source venv/Scripts/activate
-# или (Linux/Mac)
-source venv/bin/activate
-
-# Установка зависимостей
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements/development.txt
-
-# Создать .env файл
-cp .env.example .env
-# Отредактируйте .env — минимум: SECRET_KEY, DEBUG=True
-
-# Миграции БД
+export SECRET_KEY=local-development-key
 python manage.py migrate
-
-# Создать суперюзера (для админки)
 python manage.py createsuperuser
-
-# Запуск сервера (ASGI/Daphne — поддерживает WebSocket)
-python manage.py runserver 127.0.0.1:8000
+python manage.py runserver
 ```
 
-Backend будет доступен:
-- **Лидерборд**: http://127.0.0.1:8000/
-- **Трейнерская**: http://127.0.0.1:8000/trainer/
-- **Админка**: http://127.0.0.1:8000/admin/
-- **API**: http://127.0.0.1:8000/api/leaderboard/
+Во втором терминале:
 
-### 3. Frontend (опционально, React)
 ```bash
 cd frontend
-npm install
-npm run dev    # http://localhost:3000
+npm ci
+npm run dev
 ```
 
-> ⚠️ На Windows + Node 18 есть баг IPv6 proxy. Фронтенд ходит напрямую
-> в Django API (`http://127.0.0.1:8000/api/`), CORS настроен.
+Откройте `http://localhost:5173/lra26/`.
 
-### 4. Telegram-бот (опционально)
+## Production на gofaraway.mooo.com/lra26/
+
+Полная пошаговая инструкция находится в [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+Кратко:
+
 ```bash
-cd backend
-source venv/Scripts/activate
-
-# Установите токен бота в .env:
-# TELEGRAM_BOT_TOKEN=your-bot-token-here
-
-# Запуск бота (в отдельном терминале)
-python manage.py runbot
-```
-
----
-
-## 🤖 Настройка Telegram-бота
-
-### Создание бота
-1. Откройте [@BotFather](https://t.me/BotFather) в Telegram
-2. Отправьте `/newbot`
-3. Укажите имя: `ЛРА-2026 Рейтинг`
-4. Укажите username: `lra26_score_bot` (или любой свободный)
-5. Скопируйте полученный **токен** (вида `1234567890:ABCdef...`)
-
-### Конфигурация
-Добавьте токен в `backend/.env`:
-```
-TELEGRAM_BOT_TOKEN=1234567890:ABCdef...
-```
-
-### Команды бота
-| Команда | Описание |
-|---------|----------|
-| `/start` | Приветствие |
-| `/teams` | Топ-10 команд |
-| `/myteam` | Информация о вашей команде |
-| `/addscore` | Внести результат (интерактивные кнопки) |
-| `/login <код>` | Привязать Telegram к аккаунту тренера |
-
-### Привязка тренера к Telegram
-1. Создайте тренера в Django Admin (`/admin/trainers/trainer/`)
-2. Тренер отправляет боту `/login <код>`
-3. Его `telegram_id` привязывается к модели Trainer
-
----
-
-## 📱 Настройка VK Mini App (планируется)
-
-Для интеграции с ВКонтакте можно использовать [VK Mini Apps](https://dev.vk.com/mini-apps):
-
-1. Создайте приложение в [VK Developer](https://dev.vk.com/)
-2. Тип: **Mini App** (IFrame)
-3. URL: укажите URL вашего фронтенда
-4. Используйте [VK Bridge](https://dev.vk.com/mini-apps/development/bridge)
-   для авторизации пользователей через VK
-
-На данный момент VK интеграция **не реализована**.  
-Основной интерфейс — веб-страницы leaderboard и trainer panel.
-
----
-
-## 🔌 API Endpoints
-
-| Endpoint | Метод | Описание |
-|----------|-------|----------|
-| `/api/leaderboard/` | GET | Рейтинг команд (public) |
-| `/api/my-team/` | GET | Команда текущего тренера (auth) |
-| `/api/teams/` | GET/POST | CRUD команд |
-| `/api/scores/` | GET/POST | CRUD оценок |
-| `/api/quests/` | GET/POST | CRUD квестов |
-| `/api/trainers/` | GET/POST | CRUD тренеров |
-| `/api/marks/` | GET/POST | CRUD чёрных меток |
-| `/ws/leaderboard/` | WS | Real-time обновления |
-
----
-
-## 🧪 Тесты
-```bash
-# Backend
-cd backend
-pytest
-
-# Frontend
-cd frontend
-npm run lint
-```
-
----
-
-## 📦 Docker Compose (продакшен)
-```bash
+cp .env.example .env
+# Заполнить SECRET_KEY, POSTGRES_PASSWORD и интеграционные секреты
+docker compose build
 docker compose up -d
+docker compose exec backend python manage.py createsuperuser
 ```
 
-Сервисы:
-- **backend** — Daphne на порту 8000
-- **frontend** — Nginx на порту 80
-- **redis** — для Channels layer
-- **bot** — Telegram-бот
+Затем добавьте [готовый location-блок](deploy/nginx-lra26.conf) в существующий HTTPS-конфиг `gofaraway.mooo.com` и выполните проверку конфигурации Nginx.
 
----
+## Telegram и VK
 
-## 👨‍🏫 Интерфейс тренера
+Telegram-бот поддерживает `/start`, `/teams`, `/myteam`, `/login КОД` и административный `/addscore`. Кнопка запуска открывает тот же PWA внутри Telegram. Сервер проверяет подпись `initData` и срок её действия.
 
-Тренеры могут выставлять оценки через веб:  
-**URL**: http://127.0.0.1:8000/trainer/
+VK-сборка использует официальный `@vkontakte/vk-bridge`. Подписанные launch parameters проверяются на сервере с `VK_APP_SECRET`. Идентификаторы платформ не принимаются от клиента без проверки подписи.
 
-1. Выберите квест из списка активных
-2. Для каждой команды выставьте баллы
-3. Нажмите «Сохранить все оценки»
-4. Данные мгновенно обновятся на лидерборде
+## Проверки
 
----
+```bash
+cd backend
+ruff check .
+ruff format --check .
+pytest --cov=apps --cov-fail-under=80
+pip-audit -r requirements/production.txt
 
-## 🚀 Деплой
-GitHub Actions auto-tests на PR в main.  
-Деплой: VPS с Docker Compose + Nginx reverse proxy.
+cd ../frontend
+npm ci
+npm run check
+npm run build
+npm audit --omit=dev
+```
 
----
+GitHub Actions дополнительно выполняет CodeQL и сборку обоих Docker-образов. Dependabot следит за Python, npm, Docker и Actions.
 
-## 📝 Лицензия
-MIT © Saborrr
+## Безопасность
+
+- Argon2 для паролей, короткоживущий access JWT и HttpOnly refresh cookie.
+- Ротация и blacklist refresh-токенов.
+- Rate limit для входа и platform-auth.
+- Проверка максимальных баллов и положительности штрафа на API и уровне БД.
+- Origin validation для WebSocket.
+- CSP, `nosniff`, Referrer Policy и запрет лишних browser permissions.
+- Контейнеры без root, с read-only filesystem и `no-new-privileges`.
+- Секреты только через `.env`, который исключён из Git.
+- Audit log для привилегированных операций.
+
+Уязвимости следует сообщать приватно по правилам [SECURITY.md](SECURITY.md).
+
+## Автор
+
+**Aleksandr Fadeev** · [@Saborrr](https://github.com/Saborrr)
+
+Проект распространяется по лицензии [Apache 2.0](LICENSE).

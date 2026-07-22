@@ -1,59 +1,46 @@
+from django.core.validators import MinValueValidator
 from django.db import models
-from apps.teams.models import Team
 
 
-# Модель Счета (Score) - связывает команду и квест с баллами.
-# Отвечает за запись результатов прохождения квестов командами.
-# Сумма points по команде = team.score (обновляется через signal).
 class Score(models.Model):
-    # Связь с командой (удаление счета при удалении команды)
     team = models.ForeignKey(
-        Team, 
-        on_delete=models.CASCADE, 
-        related_name="scores",
-        verbose_name="Команда"
-    )
-    # Связь с квестом (ForeignKey вместо CharField)
-    quest = models.ForeignKey(
-        'quests.Quest',
+        "teams.Team",
         on_delete=models.CASCADE,
         related_name="scores",
-        verbose_name="Квест"
+        verbose_name="Команда",
     )
-    # Баллы за квест (default 0)
-    points = models.IntegerField(
-        default=0,
-        verbose_name="Баллы"
+    quest = models.ForeignKey(
+        "quests.Quest",
+        on_delete=models.CASCADE,
+        related_name="scores",
+        verbose_name="Квест",
     )
-    # Подтверждён ли результат
-    verified = models.BooleanField(
-        default=False,
-        verbose_name="Подтверждён"
+    points = models.PositiveIntegerField(
+        default=0, validators=[MinValueValidator(0)], verbose_name="Баллы"
     )
-    # Кто внёс результат
+    verified = models.BooleanField(default=True, verbose_name="Подтверждён")
     entered_by = models.ForeignKey(
-        'trainers.Trainer',
+        "trainers.Trainer",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="entered_scores",
-        verbose_name="Внёс"
+        verbose_name="Внёс",
     )
-    # Примечания
-    notes = models.TextField(
-        blank=True,
-        verbose_name="Примечания"
-    )
-    # Время прохождения (авто)
+    notes = models.TextField(blank=True, max_length=1000, verbose_name="Примечания")
     timestamp = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        # Сортировка по новизне (последние сверху)
-        ordering = ["-timestamp"]
+        ordering = ["-updated_at"]
         verbose_name = "Результат"
         verbose_name_plural = "Результаты"
-        # Уникальность: одна команда - один квест
-        unique_together = ['team', 'quest']
+        constraints = [
+            models.UniqueConstraint(fields=["team", "quest"], name="unique_team_quest_score"),
+            models.CheckConstraint(
+                condition=models.Q(points__gte=0), name="score_points_non_negative"
+            ),
+        ]
 
     def __str__(self):
-        return f"{self.team.name} - {self.quest_id}: {self.points} pts"
+        return f"{self.team} · {self.quest_id}: {self.points}"

@@ -1,28 +1,12 @@
-# Frontend Dockerfile для LRA-26
-# Этап 1: Сборка
-FROM node:20-alpine AS builder
-
+FROM node:22-alpine AS builder
 WORKDIR /app
-
-# Копируем package файлы
 COPY package*.json ./
-RUN npm ci
-
-# Копируем исходный код
+RUN npm ci --ignore-scripts
 COPY . .
-
-# Собираем приложение
 RUN npm run build
 
-# Этап 2: Nginx
-FROM nginx:alpine
-
-# Копируем собранные файлы
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Копируем конфиг nginx
+FROM nginx:1.29-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
+COPY --from=builder /app/dist /usr/share/nginx/html/lra26
 EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD wget -qO- http://127.0.0.1/lra26/ >/dev/null || exit 1

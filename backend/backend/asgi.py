@@ -1,25 +1,23 @@
-"""
-ASGI config for lra26-backend with Channels support.
-"""
+"""ASGI entrypoint with origin-checked WebSockets."""
+
 import os
 
-from django.core.asgi import get_asgi_application
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings.production")
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.security.websocket import AllowedHostsOriginValidator
+from django.core.asgi import get_asgi_application
 
 django_asgi_app = get_asgi_application()
 
-from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
+from ws.routing import websocket_urlpatterns  # noqa: E402
 
-# Import ws.routing after to avoid circular
-import ws.routing
-
-application = ProtocolTypeRouter({
-    "http": django_asgi_app,
-    "websocket": AuthMiddlewareStack(
-        URLRouter(
-            ws.routing.websocket_urlpatterns
-        )
-    ),
-})
+application = ProtocolTypeRouter(
+    {
+        "http": django_asgi_app,
+        "websocket": AllowedHostsOriginValidator(
+            AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
+        ),
+    }
+)

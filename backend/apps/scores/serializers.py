@@ -1,18 +1,12 @@
-"""Сериализаторы для результатов."""
-
 from rest_framework import serializers
 
 from .models import Score
 
 
 class ScoreSerializer(serializers.ModelSerializer):
-    """Полный сериализатор результата."""
-
     team_name = serializers.CharField(source="team.name", read_only=True)
     quest_title = serializers.CharField(source="quest.title", read_only=True)
-    entered_by_name = serializers.CharField(
-        source="entered_by.name", read_only=True, allow_null=True
-    )
+    entered_by_name = serializers.CharField(source="entered_by.name", read_only=True)
 
     class Meta:
         model = Score
@@ -24,37 +18,19 @@ class ScoreSerializer(serializers.ModelSerializer):
             "quest_title",
             "points",
             "verified",
-            "entered_by",
             "entered_by_name",
             "notes",
             "timestamp",
+            "updated_at",
         ]
-        read_only_fields = ["timestamp"]
+        read_only_fields = ["entered_by_name", "timestamp", "updated_at"]
+        # The API intentionally treats a repeated team/quest pair as an update.
+        # Database uniqueness still provides the final integrity guarantee.
+        validators = []
 
-
-class ScoreListSerializer(serializers.ModelSerializer):
-    """Краткий сериализатор для списка результатов."""
-
-    team_name = serializers.CharField(source="team.name", read_only=True)
-    quest_title = serializers.CharField(source="quest.title", read_only=True)
-
-    class Meta:
-        model = Score
-        fields = [
-            "id",
-            "team",
-            "team_name",
-            "quest",
-            "quest_title",
-            "points",
-            "verified",
-            "timestamp",
-        ]
-
-
-class ScoreCreateSerializer(serializers.ModelSerializer):
-    """Сериализатор для создания результата."""
-
-    class Meta:
-        model = Score
-        fields = ["team", "quest", "points", "notes"]
+    def validate(self, attrs):
+        quest = attrs.get("quest") or getattr(self.instance, "quest", None)
+        points = attrs.get("points", getattr(self.instance, "points", 0))
+        if quest and points > quest.points:
+            raise serializers.ValidationError({"points": f"Максимум для задания: {quest.points}"})
+        return attrs

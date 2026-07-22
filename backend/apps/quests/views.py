@@ -1,34 +1,38 @@
-"""Views для квестов."""
-
-from django_filters.rest_framework import DjangoFilterBackend
+from django.db import transaction
 from rest_framework import viewsets
-from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
+
+from api.permissions import IsAdminOrReadOnly
+from apps.accounts.services import audit
 
 from .models import Quest
 from .serializers import QuestListSerializer, QuestSerializer
 
 
-class IsAdminOrReadOnly(IsAuthenticatedOrReadOnly):
-    """Разрешает чтение всем, редактирование только админам."""
-
-    def has_permission(self, request, view):
-        if request.method in ["GET", "HEAD", "OPTIONS"]:
-            return True
-        return request.user and request.user.is_staff
-
-
 class QuestViewSet(viewsets.ModelViewSet):
-    """ViewSet для квестов."""
-
     queryset = Quest.objects.all()
-    serializer_class = QuestSerializer
     permission_classes = [IsAdminOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["category", "is_active"]
-    ordering = ["order", "title"]
+    filterset_fields = ["category", "active"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not (self.request.user.is_authenticated and self.request.user.is_staff):
+            queryset = queryset.filter(active=True)
+        return queryset
 
     def get_serializer_class(self):
-        """Возвращает краткий сериализатор для списка."""
-        if self.action == "list":
-            return QuestListSerializer
-        return super().get_serializer_class()
+        return QuestListSerializer if self.action in {"list", "retrieve"} else QuestSerializer
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        obj = serializer.save()
+        audit(action="quest.create", actor=self.request.user, target=obj, request=self.request)
+
+    @transaction.atomic
+    def perform_update(self, serializer):
+        obj = serializer.save()
+        audit(action="quest.update", actor=self.request.user, target=obj, request=self.request)
+
+    @transaction.atomic
+    def perform_destroy(self, instance):
+        audit(action="quest.delete", actor=self.request.user, target=instance, request=self.request)
+        instance.delete()

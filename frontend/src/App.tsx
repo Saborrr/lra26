@@ -1,33 +1,32 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { LeaderboardPage } from './pages/LeaderboardPage';
-import { AdminLayout } from './pages/admin/AdminLayout';
-import { DashboardPage } from './pages/admin/DashboardPage';
-import { TeamsPage } from './pages/admin/TeamsPage';
-import { ScoresPage } from './pages/admin/ScoresPage';
-import { QuestsPage } from './pages/admin/QuestsPage';
-import { TrainersPage } from './pages/admin/TrainersPage';
-import { MarksPage } from './pages/admin/MarksPage';
-import { VkProvider } from './services/vk';
-import './index.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-function App() {
+import { AppShell } from './components/AppShell';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AuthProvider } from './contexts/AuthContext';
+import { AdminPage } from './pages/AdminPage';
+import { HomePage } from './pages/HomePage';
+import { LoginPage } from './pages/LoginPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { ParticipantPage } from './pages/ParticipantPage';
+import { SuperAdminPage } from './pages/SuperAdminPage';
+
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+export default function App() {
   return (
-    <VkProvider>
-      <BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter basename={basename}>
         <Routes>
-          <Route path="/" element={<LeaderboardPage />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="teams" element={<TeamsPage />} />
-            <Route path="scores" element={<ScoresPage />} />
-            <Route path="quests" element={<QuestsPage />} />
-            <Route path="trainers" element={<TrainersPage />} />
-            <Route path="marks" element={<MarksPage />} />
+          <Route element={<AppShell />}>
+            <Route index element={<HomePage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="app" element={<ProtectedRoute><ParticipantPage /></ProtectedRoute>} />
+            <Route path="admin" element={<ProtectedRoute minimum="admin"><AdminPage /></ProtectedRoute>} />
+            <Route path="superadmin" element={<ProtectedRoute minimum="superadmin"><SuperAdminPage /></ProtectedRoute>} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
-    </VkProvider>
+    </AuthProvider>
   );
 }
-
-export default App;

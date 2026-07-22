@@ -1,52 +1,14 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[project]
-name = "lra26-backend"
-dynamic = ["version"]
-dependencies = [
-  "Django==5.1.1",
-  "djangorestframework==3.15.2",
-  "channels==4.1.0",
-  "djangorestframework-simplejwt==5.3.1",
-  "python-decouple==3.8",
-  "django-cors-headers==4.4.0",
-]
-
-[project.optional-dependencies]
-dev = [
-  "pytest==8.3.3",
-  "pytest-django==4.11.1",
-  "django-debug-toolbar==4.4.6",
-  "black==24.8.0",
-  "ruff==0.6.8",
-  "mypy==1.11.1",
-]
-prod = [
-  "gunicorn==23.0.0",
-  "sentry-sdk==2.14.0",
-  "whitenoise==6.8.0",
-]
-
 [tool.ruff]
-line-length = 88
-target-version = "py39"
+line-length = 100
+target-version = "py312"
 
-select = [
-  "E",  # pycodestyle errors
-  "F",  # pyflakes
-  "B",  # flake8-blind-except, flake8-bugbear
-  "Q",  # docstrings
-  "UP", # pyupgrade
-]
-ignore = ["E501"]
+[tool.ruff.lint]
+select = ["E", "F", "B", "I", "UP", "S"]
+ignore = ["S101"]
 
-[tool.black]
-line-length = 88
+[tool.ruff.lint.per-file-ignores]
+"**/migrations/*.py" = ["E501"]
+"**/tests/*.py" = ["S105", "S106"]
 
-[tool.mypy]
-python_version = "3.11"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
+[tool.ruff.format]
+quote-style = "double"

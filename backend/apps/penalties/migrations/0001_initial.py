@@ -5,29 +5,51 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('teams', '0002_team_color_team_logo_team_penalty_alter_team_name_and_more'),
-        ('trainers', '0001_initial'),
+        ("teams", "0002_team_color_team_logo_team_penalty_alter_team_name_and_more"),
+        ("trainers", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='BlackMark',
+            name="BlackMark",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('reason', models.CharField(max_length=200, verbose_name='Причина')),
-                ('penalty', models.IntegerField(default=0, verbose_name='Штраф (баллы)')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата')),
-                ('given_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='given_marks', to='trainers.trainer', verbose_name='Выдал')),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='black_marks', to='teams.team', verbose_name='Команда')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("reason", models.CharField(max_length=200, verbose_name="Причина")),
+                ("penalty", models.IntegerField(default=0, verbose_name="Штраф (баллы)")),
+                ("created_at", models.DateTimeField(auto_now_add=True, verbose_name="Дата")),
+                (
+                    "given_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="given_marks",
+                        to="trainers.trainer",
+                        verbose_name="Выдал",
+                    ),
+                ),
+                (
+                    "team",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="black_marks",
+                        to="teams.team",
+                        verbose_name="Команда",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Чёрная метка',
-                'verbose_name_plural': 'Чёрные метки',
-                'ordering': ['-created_at'],
+                "verbose_name": "Чёрная метка",
+                "verbose_name_plural": "Чёрные метки",
+                "ordering": ["-created_at"],
             },
         ),
     ]

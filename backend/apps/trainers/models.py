@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 
 # Модель Тренера (Trainer) - связывает пользователя с командой.
@@ -8,30 +8,16 @@ from django.contrib.auth.models import User
 class Trainer(models.Model):
     # Связь с пользователем Django (опционально)
     user = models.OneToOneField(
-        User, 
-        on_delete=models.CASCADE, 
-        null=True, 
-        blank=True,
-        verbose_name="Пользователь"
+        User, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Пользователь"
     )
     # Имя тренера (обязательное)
-    name = models.CharField(
-        max_length=100, 
-        verbose_name="Имя тренера"
-    )
+    name = models.CharField(max_length=100, verbose_name="Имя тренера")
     # Telegram ID для бота (опционально, уникально)
     telegram_id = models.BigIntegerField(
-        null=True, 
-        blank=True, 
-        unique=True,
-        verbose_name="Telegram ID"
+        null=True, blank=True, unique=True, verbose_name="Telegram ID"
     )
     # Телефон для связи (опционально)
-    phone = models.CharField(
-        max_length=20, 
-        blank=True,
-        verbose_name="Телефон"
-    )
+    phone = models.CharField(max_length=20, blank=True, verbose_name="Телефон")
     # Дата создания
     created_at = models.DateTimeField(auto_now_add=True)
     # Дата обновления

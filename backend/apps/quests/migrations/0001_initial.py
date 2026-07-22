@@ -4,29 +4,32 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Quest',
+            name="Quest",
             fields=[
-                ('id', models.CharField(max_length=50, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200, verbose_name='Название')),
-                ('description', models.TextField(blank=True, verbose_name='Описание')),
-                ('points', models.PositiveIntegerField(verbose_name='Баллы')),
-                ('category', models.CharField(blank=True, max_length=50, verbose_name='Категория')),
-                ('order', models.PositiveIntegerField(default=0, verbose_name='Порядок')),
-                ('active', models.BooleanField(default=True, verbose_name='Активен')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.CharField(
+                        max_length=50, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("title", models.CharField(max_length=200, verbose_name="Название")),
+                ("description", models.TextField(blank=True, verbose_name="Описание")),
+                ("points", models.PositiveIntegerField(verbose_name="Баллы")),
+                ("category", models.CharField(blank=True, max_length=50, verbose_name="Категория")),
+                ("order", models.PositiveIntegerField(default=0, verbose_name="Порядок")),
+                ("active", models.BooleanField(default=True, verbose_name="Активен")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'verbose_name': 'Квест',
-                'verbose_name_plural': 'Квесты',
-                'ordering': ['order', 'id'],
+                "verbose_name": "Квест",
+                "verbose_name_plural": "Квесты",
+                "ordering": ["order", "id"],
             },
         ),
     ]
