@@ -11,7 +11,7 @@
 [![Django](https://img.shields.io/badge/Django-5.2_LTS-092E20?logo=django)](https://www.djangoproject.com/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=08121a)](https://react.dev/)
 [![PWA](https://img.shields.io/badge/PWA-ready-7967ff?logo=pwa)](https://web.dev/explore/progressive-web-apps)
-[![License](https://img.shields.io/badge/license-Apache--2.0-48e5ff)](LICENSE)
+[![License](https://img.shields.io/badge/license-PolyForm_Noncommercial-48e5ff)](LICENSE)
 
 **Русский** · [English](README_EN.md)
 
@@ -147,8 +147,14 @@ GitHub Actions дополнительно выполняет CodeQL и сбор�
 
 Уязвимости следует сообщать приватно по правилам [SECURITY.md](SECURITY.md).
 
+## Лицензирование
+
+Исходный код доступен по [PolyForm Noncommercial License 1.0.0](LICENSE). Личное, учебное и другое некоммерческое использование разрешено при сохранении уведомления об авторе и ссылки на исходный проект. Коммерческое использование, SaaS, перепродажа и использование в деятельности, приносящей доход, требуют отдельного [коммерческого соглашения](COMMERCIAL_LICENSE.md) с Aleksandr Fadeev. В соглашении может быть установлена фиксированная плата, подписка или процент от выручки.
+
+Это **source-available**, а не OSI-совместимый open source проект.
+
 ## Автор
 
 **Aleksandr Fadeev** · [@Saborrr](https://github.com/Saborrr)
 
-Проект распространяется по лицензии [Apache 2.0](LICENSE).
+Некоммерческая лицензия: [PolyForm Noncommercial 1.0.0](LICENSE) · [Коммерческие условия](COMMERCIAL_LICENSE.md).
