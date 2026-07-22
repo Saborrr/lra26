@@ -1,83 +1,177 @@
 <div align="center">
 
-<img src="frontend/public/icons/icon.svg" width="112" alt="LRA-26" />
+<a href="https://gofaraway.mooo.com/lra26/">
+  <img src="frontend/public/icons/icon.svg" width="112" alt="Логотип LRA-26" />
+</a>
 
-# LRA-26 · Live Space Ranking
+# LRA-26
 
-Космическая платформа соревнований для Web, iOS, Android, Telegram и VK.
+### Live Space Ranking
+
+Космическая платформа командных соревнований с живым рейтингом, кабинетами участников и разграничением прав.
 
 [![CI](https://github.com/Saborrr/lra26/actions/workflows/ci.yml/badge.svg)](https://github.com/Saborrr/lra26/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/Saborrr/lra26/actions/workflows/codeql.yml/badge.svg)](https://github.com/Saborrr/lra26/actions/workflows/codeql.yml)
-[![Django](https://img.shields.io/badge/Django-5.2_LTS-092E20?logo=django)](https://www.djangoproject.com/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=08121a)](https://react.dev/)
-[![PWA](https://img.shields.io/badge/PWA-ready-7967ff?logo=pwa)](https://web.dev/explore/progressive-web-apps)
-[![License](https://img.shields.io/badge/license-PolyForm_Noncommercial-48e5ff)](LICENSE)
+[![Django 6.0.7](https://img.shields.io/badge/Django-6.0.7-092E20?logo=django&logoColor=white)](backend/requirements/base.txt)
+[![React 19.2.8](https://img.shields.io/badge/React-19.2.8-61DAFB?logo=react&logoColor=08121a)](frontend/package-lock.json)
+[![TypeScript 7](https://img.shields.io/badge/TypeScript-7.0.2-3178C6?logo=typescript&logoColor=white)](frontend/package-lock.json)
+[![PWA](https://img.shields.io/badge/PWA-installable-7967ff?logo=pwa&logoColor=white)](frontend/vite.config.ts)
+[![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial-48e5ff)](LICENSE)
 
-**Русский** · [English](README_EN.md)
+**Русский** · [English](README_EN.md) · [Демо без установки](index.html) · [Развёртывание](docs/DEPLOYMENT.md)
 
 </div>
 
-![Предпросмотр LRA-26](docs/assets/app-preview.svg)
+<p align="center">
+  <img src="docs/assets/lra26-cosmic-dashboard.svg" width="100%" alt="Космический интерфейс LRA-26 с рейтингом команд" />
+</p>
 
-> Скачали репозиторий ZIP-архивом? Откройте корневой файл `index.html` двойным щелчком. Это автономный интерактивный макет с демонстрационными данными, который не требует установки Python, Node.js или базы данных.
+<p align="center"><sub>Стартовый экран и live-рейтинг. В приложении звёздное поле плавно движется и мерцает.</sub></p>
+
+## О проекте
+
+**LRA-26** объединяет публичный рейтинг, личный кабинет, управление соревнованием и интеграции с мессенджерами в одном адаптивном PWA. Один интерфейс работает в обычном браузере, устанавливается на iPhone и Android, открывается как Telegram Mini App и VK Mini App.
+
+> Хотите только посмотреть дизайн? Скачайте ZIP, распакуйте архив и откройте корневой `index.html` двойным щелчком. Это автономное интерактивное демо с тестовыми данными: сервер, Python и Node.js не нужны.
 
 ## Возможности
 
-- Публичный live-рейтинг с WebSocket и резервным обновлением по HTTP.
-- Устанавливаемое PWA для iPhone, iPad и Android.
-- Telegram Mini App и безопасный Telegram-бот.
-- VK Mini App через официальный VK Bridge.
-- Кабинет участника с командой, баллами и активными заданиями.
-- Панель администратора для команд, квестов, результатов и штрафов.
-- Отдельная роль суперадминистратора для пользователей, прав и журнала действий.
-- Одноразовые 15-минутные коды привязки Telegram/VK.
-- PostgreSQL, Redis, Django Channels, Docker Compose и reverse proxy.
+| Для участников | Для организаторов | Для платформ |
+|---|---|---|
+| Live-рейтинг и личный прогресс | Команды, задания, баллы и штрафы | Web и устанавливаемое PWA |
+| Текущая команда и активные задания | Одноразовые коды привязки | iPhone, iPad и Android |
+| Обновления через WebSocket | Роли администратора и суперадминистратора | Telegram Bot и Mini App |
+| Адаптивный космический интерфейс | Журнал привилегированных действий | VK Mini App |
 
-## Роли
+### Роли и права
 
-| Роль | Возможности |
+| Роль | Доступ |
 |---|---|
-| Участник | Публичный рейтинг, свой кабинет, команда и задания |
-| Администратор | Управление командами, квестами, результатами, штрафами и кодами участников |
-| Суперадминистратор | Все права администратора, управление пользователями и ролями, полный audit log |
+| **Участник** | Публичный рейтинг, собственная команда, баллы и задания |
+| **Администратор** | Управление командами, квестами, результатами, штрафами и кодами привязки |
+| **Суперадминистратор** | Все права администратора, пользователи, роли и полный журнал действий |
 
-Публичные пользователи не могут читать внутренние результаты и изменять данные. Все изменения баллов и штрафов записываются в журнал.
+Публичный пользователь не может читать внутренние результаты или изменять данные. Операции с баллами, штрафами и правами фиксируются в журнале.
+
+## Технологии
+
+Версии ниже взяты непосредственно из файлов зависимостей и Docker-образов проекта.
+
+| Слой | Технологии |
+|---|---|
+| Backend | Python 3.14 в контейнере, Django 6.0.7, Django REST Framework 3.17.1, Channels 4.3.2, Daphne 4.2.3 |
+| Frontend | React 19.2.8, React Router 7.18.1, TypeScript 7.0.2, Vite 8.1.5, TanStack Query 5 |
+| Данные | PostgreSQL 17, Redis 8 |
+| Интеграции | python-telegram-bot 22.8, VK Bridge 3.0.2 |
+| Инфраструктура | Docker Compose, Node.js 26 и Nginx 1.31 в контейнерах, GitHub Actions, CodeQL, Dependabot |
+
+`Django~=6.0.7` разрешает совместимые исправления в ветке 6.0, а `package-lock.json` фиксирует React на версии 19.2.8. React 20 в проекте не используется.
 
 ## Архитектура
 
 ```text
-Browser / PWA / Telegram / VK
-              │
-      /lra26/ · HTTPS
-              │
-         Nginx frontend
-          ├── React PWA
-          ├── /api → Django REST
-          └── /ws  → Django Channels
-                       ├── PostgreSQL
-                       └── Redis
+Browser · PWA · Telegram · VK
+               │
+         /lra26/ · HTTPS
+               │
+          Nginx frontend
+       ┌───────┼────────┐
+       │       │        │
+   React PWA  /api     /ws
+               │        │
+               └── Django ASGI ── PostgreSQL
+                        │
+                       Redis
 
-Telegram bot → Django services → PostgreSQL
+Telegram bot ── Django services ── PostgreSQL
 ```
 
-На production наружу публикуется только `127.0.0.1:8088`. PostgreSQL, Redis и Django находятся во внутренней Docker-сети и не занимают публичные порты.
+В production наружу публикуется только `127.0.0.1:8088`. Backend, PostgreSQL и Redis остаются во внутренней Docker-сети.
 
-## Быстрый локальный запуск
+## Быстрый старт
 
-### Посмотреть дизайн без установки
+### 1. Автономное демо без установки
 
-Откройте файл `index.html` из корня репозитория в Chrome, Edge, Firefox или Safari. В верхнем меню можно переключаться между публичным рейтингом, кабинетом участника и панелью администратора. Это демонстрация интерфейса: формы и данные в ней не сохраняются.
+1. Нажмите **Code → Download ZIP** на GitHub.
+2. Полностью распакуйте архив.
+3. Откройте файл `index.html` из корня папки в Chrome, Edge, Firefox или Safari.
 
-### Запустить настоящее приложение
+В демо можно переключаться между публичным рейтингом, кабинетом участника и управлением. Изменения не сохраняются.
 
-Требуются Python 3.12+, Node.js 22+ и Redis при проверке WebSocket.
+### 2. Полноценный локальный запуск
+
+Понадобятся **Git**, **Python 3.12–3.14** и **Node.js 22.12+**. Redis для первого запуска необязателен: в development используется встроенный channel layer. Для окружения, максимально близкого к серверу, установите [Docker Desktop для Windows](https://docs.docker.com/desktop/setup/install/windows-install/) или [Docker Desktop для macOS](https://docs.docker.com/desktop/setup/install/mac-install/).
+
+<details open>
+<summary><strong>Windows 10/11 · PowerShell</strong></summary>
+
+Скачайте и установите [Python](https://www.python.org/downloads/windows/), [Node.js](https://nodejs.org/en/download) и [Git](https://git-scm.com/download/win), затем откройте PowerShell:
+
+```powershell
+git clone https://github.com/Saborrr/lra26.git
+cd lra26
+
+cd backend
+py -3.14 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements\development.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+Если установлена Python 3.13 или 3.12, замените `-3.14` соответствующим номером. Если PowerShell запрещает активацию, один раз выполните `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` и повторите команду активации.
+
+Оставьте backend запущенным. Откройте **второе окно PowerShell**:
+
+```powershell
+cd путь\к\lra26\frontend
+npm ci
+npm run dev
+```
+
+</details>
+
+<details>
+<summary><strong>macOS · Terminal</strong></summary>
+
+Установите [Python](https://www.python.org/downloads/macos/), [Node.js](https://nodejs.org/en/download) и Git. Затем:
 
 ```bash
-cd backend
-python -m venv .venv
+git clone https://github.com/Saborrr/lra26.git
+cd lra26/backend
+python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip
 pip install -r requirements/development.txt
-export SECRET_KEY=local-development-key
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+Оставьте backend запущенным. Откройте **второе окно Terminal**:
+
+```bash
+cd /путь/к/lra26/frontend
+npm ci
+npm run dev
+```
+
+</details>
+
+<details>
+<summary><strong>Linux · bash/zsh</strong></summary>
+
+Установите Git, Python 3.12+ с модулем `venv` и Node.js 22.12+. Затем выполните те же POSIX-команды:
+
+```bash
+git clone https://github.com/Saborrr/lra26.git
+cd lra26/backend
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements/development.txt
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
@@ -86,36 +180,53 @@ python manage.py runserver
 Во втором терминале:
 
 ```bash
-cd frontend
+cd /путь/к/lra26/frontend
 npm ci
 npm run dev
 ```
 
-Откройте `http://localhost:5173/lra26/`.
+</details>
 
-## Production на gofaraway.mooo.com/lra26/
+После запуска откройте **http://localhost:5173/lra26/**. Django API работает на `http://127.0.0.1:8000`, а Vite автоматически проксирует запросы `/api` и `/ws`.
 
-Полная пошаговая инструкция находится в [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+### 3. Docker Compose и сервер
 
-Кратко:
+Docker используется для production-развёртывания всего стека: frontend, backend, PostgreSQL, Redis и Telegram-бот.
+
+**macOS/Linux:**
 
 ```bash
 cp .env.example .env
-# Заполнить SECRET_KEY, POSTGRES_PASSWORD и интеграционные секреты
-docker compose build
+# Заполните SECRET_KEY, POSTGRES_PASSWORD и остальные production-параметры
+docker compose config
+docker compose build --pull
 docker compose up -d
 docker compose exec backend python manage.py createsuperuser
 ```
 
-Затем добавьте [готовый location-блок](deploy/nginx-lra26.conf) в существующий HTTPS-конфиг `gofaraway.mooo.com` и выполните проверку конфигурации Nginx.
+**Windows PowerShell:**
 
-## Telegram и VK
+```powershell
+Copy-Item .env.example .env
+# Заполните SECRET_KEY, POSTGRES_PASSWORD и остальные production-параметры
+docker compose config
+docker compose build --pull
+docker compose up -d
+docker compose exec backend python manage.py createsuperuser
+```
 
-Telegram-бот поддерживает `/start`, `/teams`, `/myteam`, `/login КОД` и административный `/addscore`. Кнопка запуска открывает тот же PWA внутри Telegram. Сервер проверяет подпись `initData` и срок её действия.
+Не запускайте production-файл `.env` с демонстрационными секретами. Полная инструкция для `https://gofaraway.mooo.com/lra26/`, reverse proxy, резервных копий, Telegram и VK находится в [руководстве по развёртыванию](docs/DEPLOYMENT.md).
 
-VK-сборка использует официальный `@vkontakte/vk-bridge`. Подписанные launch parameters проверяются на сервере с `VK_APP_SECRET`. Идентификаторы платформ не принимаются от клиента без проверки подписи.
+## Установка на телефон и интеграции
 
-## Проверки
+- **iPhone/iPad:** откройте HTTPS-версию в Safari → «Поделиться» → «На экран Домой».
+- **Android:** откройте сайт в Chrome → «Установить приложение».
+- **Telegram:** Mini App открывает тот же PWA; backend проверяет подпись и срок действия `initData`.
+- **VK:** Mini App использует официальный VK Bridge; launch parameters проверяются на сервере с `VK_APP_SECRET`.
+
+Бот поддерживает `/start`, `/teams`, `/myteam`, `/login КОД` и административную команду `/addscore`.
+
+## Проверка проекта
 
 ```bash
 cd backend
@@ -131,30 +242,50 @@ npm run build
 npm audit --omit=dev
 ```
 
-GitHub Actions дополнительно выполняет CodeQL и сборку обоих Docker-образов. Dependabot следит за Python, npm, Docker и Actions.
+GitHub Actions дополнительно проверяет Docker-образы и выполняет CodeQL-анализ Python и JavaScript/TypeScript.
 
 ## Безопасность
 
-- Argon2 для паролей, короткоживущий access JWT и HttpOnly refresh cookie.
-- Ротация и blacklist refresh-токенов.
-- Rate limit для входа и platform-auth.
-- Проверка максимальных баллов и положительности штрафа на API и уровне БД.
-- Origin validation для WebSocket.
-- CSP, `nosniff`, Referrer Policy и запрет лишних browser permissions.
-- Контейнеры без root, с read-only filesystem и `no-new-privileges`.
-- Секреты только через `.env`, который исключён из Git.
-- Audit log для привилегированных операций.
+- Argon2 для паролей, короткоживущий access JWT и ротируемый refresh cookie.
+- Role-based permissions для участника, администратора и суперадминистратора.
+- Rate limiting, ограничения на уровне API и базы данных.
+- Проверка Origin для WebSocket и подписей Telegram/VK на backend.
+- CSP, `nosniff`, Referrer Policy и ограничение browser permissions.
+- Контейнеры без root с read-only filesystem и `no-new-privileges`.
+- Секреты через `.env`, исключённый из Git.
+- Журнал привилегированных операций.
 
-Уязвимости следует сообщать приватно по правилам [SECURITY.md](SECURITY.md).
+Сообщайте об уязвимостях приватно по правилам [SECURITY.md](SECURITY.md). Не публикуйте токены, cookie, содержимое `.env`, launch parameters или персональные данные в Issue.
+
+## Структура
+
+```text
+lra26/
+├── backend/              Django, REST API, WebSocket и Telegram bot
+├── frontend/             React PWA и адаптеры платформ
+├── deploy/               Конфигурация reverse proxy
+├── docs/                 Развёртывание и изображения
+├── docker-compose.yml    Production-стек
+├── index.html            Автономное интерактивное демо
+└── README_EN.md          English documentation
+```
 
 ## Лицензирование
 
-Исходный код доступен по [PolyForm Noncommercial License 1.0.0](LICENSE). Личное, учебное и другое некоммерческое использование разрешено при сохранении уведомления об авторе и ссылки на исходный проект. Коммерческое использование, SaaS, перепродажа и использование в деятельности, приносящей доход, требуют отдельного [коммерческого соглашения](COMMERCIAL_LICENSE.md) с Aleksandr Fadeev. В соглашении может быть установлена фиксированная плата, подписка или процент от выручки.
+Код распространяется по [PolyForm Noncommercial License 1.0.0](LICENSE). Личное, учебное и другое некоммерческое использование разрешено при сохранении уведомления об авторе и ссылки на исходный проект.
+
+Коммерческое использование, SaaS, перепродажа или применение в деятельности, приносящей доход, требуют отдельного [коммерческого соглашения](COMMERCIAL_LICENSE.md) с Aleksandr Fadeev. В соглашении могут использоваться фиксированная плата, подписка или процент от выручки.
 
 Это **source-available**, а не OSI-совместимый open source проект.
 
 ## Автор
 
-**Aleksandr Fadeev** · [@Saborrr](https://github.com/Saborrr)
+<div align="center">
 
-Некоммерческая лицензия: [PolyForm Noncommercial 1.0.0](LICENSE) · [Коммерческие условия](COMMERCIAL_LICENSE.md).
+**Aleksandr Fadeev**
+
+[@Saborrr](https://github.com/Saborrr) · [Исходный проект](https://github.com/Saborrr/lra26) · [Коммерческие условия](COMMERCIAL_LICENSE.md)
+
+<sub>© 2026 Aleksandr Fadeev. LRA-26 · Live Space Ranking.</sub>
+
+</div>
