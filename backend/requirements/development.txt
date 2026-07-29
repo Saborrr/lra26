@@ -2,5 +2,5 @@
 pytest~=9.1
 pytest-cov~=7.1
 pytest-django~=4.12
-ruff~=0.15
+ruff~=0.16
 pip-audit~=2.10
