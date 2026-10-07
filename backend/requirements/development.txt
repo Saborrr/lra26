@@ -1,6 +1,6 @@
 -r base.txt
 pytest~=9.1
 pytest-cov~=7.1
-pytest-django~=4.12
-ruff~=0.15
+pytest-django~=4.14
+ruff~=0.16
 pip-audit~=2.10
